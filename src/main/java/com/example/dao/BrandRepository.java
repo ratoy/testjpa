@@ -10,6 +10,7 @@ import java.util.List;
 import com.example.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -18,32 +19,35 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * @author wuhao
  */
-public interface BrandRepository extends PagingAndSortingRepository<Brand, Long>,BrandRepositoryCustom {
-    @Query(value = "select bi.company as brandname,bi.brandid as id,b.brand_img as brandimg,"+
-            "bi.company as company from brand b, brandinfo bi where b.brand_id=bi.brandid",nativeQuery = true)
+public interface BrandRepository extends PagingAndSortingRepository<Brand, Long>, BrandRepositoryCustom,
+        JpaSpecificationExecutor<Brand> {
+    @Query(value = "select bi.company as brandname,bi.brandid as id,b.brand_img as brandimg," +
+            "bi.company as company from brand b, brandinfo bi where b.brand_id=bi.brandid", nativeQuery = true)
     List<CustomBrand2> findCustomBrandNative2();
 
-    @Query(value = "select bi.company as brandname,bi.brandid as brandid,b.brand_img as brandimg,"+
-            "bi.company as company from brand b, brandinfo bi where b.brand_id=bi.brandid order by bi.id<2",nativeQuery = true)
+    @Query(value = "select bi.company as brandname,bi.brandid as brandid,b.brand_img as brandimg," +
+            "bi.company as company from brand b, brandinfo bi where b.brand_id=bi.brandid order by bi.id<2", nativeQuery = true)
     List<CustomBrand> findCustomBrandNative();
 
-    @Query(value = "select bi.company as brandname,bi.brandid as brandid,b.brandimg as brandimg,"+
+    @Query(value = "select bi.company as brandname,bi.brandid as brandid,b.brandimg as brandimg," +
             "bi.company as company from Brand b, BrandInfo bi where b.brandid=bi.brandid")
     List<CustomBrand> findCustomBrand();
 
-    @Query(value = "select new com.example.entity.CustomModel(b.brandimg ,bi.company,bi.brandid )"+
+    @Query(value = "select new com.example.entity.CustomModel(b.brandimg ,bi.company,bi.brandid )" +
             " from Brand b, BrandInfo bi where b.brandid=bi.brandid")
     List<CustomModel> findSurveyCount();
+
     Page<Brand> findByBrandnameLike(String brandname, Pageable pageable);
+
     List<Brand> findByBrandname(String brandname);
 
-    @Query(value = "select brand_id from brand limit 0,1",nativeQuery = true)
+    @Query(value = "select brand_id from brand limit 0,1", nativeQuery = true)
     List<Long> getAllIds();
 
-    @Query(value = "select brand_img from brand where brand_name=?1 limit 0,1",nativeQuery = true)
+    @Query(value = "select brand_img from brand where brand_name=?1 limit 0,1", nativeQuery = true)
     String getImgByName(String brandname);
 
-    @Query(value = "select brand_id from brand where brand_name=?1 limit 0,1",nativeQuery = true)
+    @Query(value = "select brand_id from brand where brand_name=?1 limit 0,1", nativeQuery = true)
     Long getIdByName(String brandname);
 
     @Modifying
@@ -53,7 +57,7 @@ public interface BrandRepository extends PagingAndSortingRepository<Brand, Long>
 
     @Modifying
     @Transactional
-    @Query(value = "update brand b set b.brand_name= ?1 where b.brand_id = ?2",nativeQuery = true)
+    @Query(value = "update brand b set b.brand_name= ?1 where b.brand_id = ?2", nativeQuery = true)
     int setFixedFirstnameNative(String brandname, Integer brandid);
 
     @Modifying
@@ -64,18 +68,23 @@ public interface BrandRepository extends PagingAndSortingRepository<Brand, Long>
     @Modifying
     @Transactional
     void deleteByBrandname(String brandname);
+
     @Modifying
     @Transactional
-    void deleteByBrandnameAndBrandimg(String brandname,String brandimg);
+    void deleteByBrandnameAndBrandimg(String brandname, String brandimg);
+
     @Modifying
     @Transactional
-    @Query(value = "delete from brand where brand_id = ?1",nativeQuery = true)
+    @Query(value = "delete from brand where brand_id = ?1", nativeQuery = true)
     void deleteBrandByIdNative(Integer brandid);
 
     List<Brand> findAllByOrderByBrandidDesc();
+
     List<Brand> findAllByOrderByBrandnameDesc();
+
     Page<Brand> findAllByOrderByBrandidDesc(Pageable pageable);
-    Page<Brand> findAllByBrandnameLikeOrderByBrandidDesc(String brandname,Pageable pageable);
+
+    Page<Brand> findAllByBrandnameLikeOrderByBrandidDesc(String brandname, Pageable pageable);
 
     List<Brand> findByBrandnameLikeAndBrandimgLike(String name, String img);
 

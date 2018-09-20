@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.dao.BrandRepository;
+import com.example.dao.BrandSpec;
 import com.example.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -105,5 +106,9 @@ public class BrandService {
 
     public List<CustomModel3> findDistinctByInfo2(){
         return brandRepository.findDistinctBrandnameByInfo2();
+    }
+
+    public List<Brand> findAllUseSpecification(Brand b){
+        return brandRepository.findAll(BrandSpec.getSpec(b.getBrandid(),b.getBrandname(),b.getBrandimg()));
     }
 }

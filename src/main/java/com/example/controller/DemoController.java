@@ -32,7 +32,7 @@ public class DemoController {
     @ApiOperation(value = "查询单属性测试", notes = "查询单属性测试")
     @GetMapping(value = "/single/allid")
     public RespResultVO<Long> findSingle(@ApiParam(value = "品牌名称")
-                                             @RequestParam(required = true) String brandname) {
+                                         @RequestParam(required = true) String brandname) {
         List<Long> brandIdList = null;
         Long brandId = null;
         if (brandname == null) {
@@ -81,8 +81,8 @@ public class DemoController {
 
     @ApiOperation(value = "不定参数查询测试", notes = "不定参数查询测试")
     @PostMapping(value = "/custom")
-    public RespResultVO<CustomModel2> customQuery(@RequestBody(required = false) OrderParamVO orderParamVO){
-        List<CustomModel2> brandList =brandService.getCustomModel2(orderParamVO);
+    public RespResultVO<CustomModel2> customQuery(@RequestBody(required = false) OrderParamVO orderParamVO) {
+        List<CustomModel2> brandList = brandService.getCustomModel2(orderParamVO);
         return RespResultVO.<CustomModel2>builder().code(0).dataList(brandList).build();
     }
 
@@ -128,12 +128,14 @@ public class DemoController {
         brandService.deleteBrandByBrandName(brandName);
         return RespResultVO.<Boolean>builder().code(0).model(true).build();
     }
+
     @ApiOperation(value = "删除测试", notes = "删除测试")
     @DeleteMapping(value = "/delete4")
-    public RespResultVO<Boolean> delete4(String brandName,String brandImg) {
-        brandService.deleteByBrandNameAndBrandImg(brandName,brandImg);
+    public RespResultVO<Boolean> delete4(String brandName, String brandImg) {
+        brandService.deleteByBrandNameAndBrandImg(brandName, brandImg);
         return RespResultVO.<Boolean>builder().code(0).model(true).build();
     }
+
     @ApiOperation(value = "分页查询测试", notes = "分页查询测试")
     @GetMapping(value = "/all/page")
     public RespResultVO<Brand> hello4(@RequestParam String name, @RequestParam int pageindex, @RequestParam int pagesize) {
@@ -156,30 +158,42 @@ public class DemoController {
     @ApiOperation(value = "Criteria查询测试", notes = "Criteria查询测试")
     @GetMapping(value = "/criteria/test")
     public RespResultVO<String> criteriaTest() {
-        List<String> brandimgList= brandService.findBrandImgByCriteria();
+        List<String> brandimgList = brandService.findBrandImgByCriteria();
         return RespResultVO.<String>builder().code(0).dataList(brandimgList).build();
     }
 
     @ApiOperation(value = "Criteria查询测试", notes = "Criteria查询测试")
     @GetMapping(value = "/like/test")
-    public RespResultVO<Brand> likeTest( @RequestParam(required = false) String name,
-                                         @RequestParam(required = false) String img){
-        List<Brand> brandimgList= brandService.findBrandLike(name,img);
+    public RespResultVO<Brand> likeTest(@RequestParam(required = false) String name,
+                                        @RequestParam(required = false) String img) {
+        List<Brand> brandimgList = brandService.findBrandLike(name, img);
         return RespResultVO.<Brand>builder().code(0).dataList(brandimgList).build();
     }
 
     @ApiOperation(value = "简单查询测试", notes = "简单查询测试")
     @GetMapping(value = "/byfield")
-    public RespResultVO<Brand> findByField( @RequestParam(required = false) String name,
-                                         @RequestParam(required = false) String img){
-        List<Brand> brandimgList= brandService.findByNameAndImg(name,img);
+    public RespResultVO<Brand> findByField(@RequestParam(required = false) String name,
+                                           @RequestParam(required = false) String img) {
+        List<Brand> brandimgList = brandService.findByNameAndImg(name, img);
         return RespResultVO.<Brand>builder().code(0).dataList(brandimgList).build();
     }
 
     @ApiOperation(value = "distinct查询测试", notes = "distinct查询测试")
     @GetMapping(value = "/distinct")
-    public RespResultVO<CustomModel3> findDistinctByInfo2(){
-        List<CustomModel3> brandimgList= brandService.findDistinctByInfo2();
+    public RespResultVO<CustomModel3> findDistinctByInfo2() {
+        List<CustomModel3> brandimgList = brandService.findDistinctByInfo2();
         return RespResultVO.<CustomModel3>builder().code(0).dataList(brandimgList).build();
+    }
+
+    @ApiOperation(value = "specification查询测试", notes = "specification查询测试")
+    @GetMapping(value = "/specification")
+    public RespResultVO<Brand> findDistinctBySpec(Long id, String name, String img) {
+        Brand brand = Brand.builder()
+                .brandid(id)
+                .brandname(name)
+                .brandimg(img)
+                .build();
+        List<Brand> brandimgList = brandService.findAllUseSpecification(brand);
+        return RespResultVO.<Brand>builder().code(0).dataList(brandimgList).build();
     }
 }
