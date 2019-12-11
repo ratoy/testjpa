@@ -67,7 +67,7 @@ public interface BrandRepository extends PagingAndSortingRepository<Brand, Long>
 
     @Modifying
     @Transactional
-    void deleteByBrandname(String brandname);
+    Long deleteByBrandname(String brandname);
 
     @Modifying
     @Transactional
@@ -92,5 +92,8 @@ public interface BrandRepository extends PagingAndSortingRepository<Brand, Long>
 
     @Query("SELECT distinct new com.example.entity.CustomModel3(b.brandname,b.brandimg) FROM Brand b")
     List<CustomModel3> findDistinctBrandnameByInfo2();
+
+    @Query("select b from Brand b, BrandInfo bi where b.brandid=bi.brandid and bi.company=?1")
+    List<Brand> findByCompany(String company);
 }
 

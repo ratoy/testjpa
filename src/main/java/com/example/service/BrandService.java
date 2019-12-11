@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.dao.BrandRepository;
 import com.example.dao.BrandSpec;
 import com.example.entity.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import java.util.List;
  * Created by wuhao on 2017/11/20.
  */
 @Service
+@Slf4j
 public class BrandService {
     @Autowired
     BrandRepository brandRepository;
@@ -71,7 +73,8 @@ public class BrandService {
     }
 
     public void deleteBrandByBrandName(String brandName) {
-        brandRepository.deleteByBrandname(brandName);
+        Long result=brandRepository.deleteByBrandname(brandName);
+        log.info("delete result: ==========>>>>>>"+result);
     }
 
     public void deleteByBrandNameAndBrandImg(String brandName, String brandImg) {
@@ -110,5 +113,9 @@ public class BrandService {
 
     public List<Brand> findAllUseSpecification(Brand b){
         return brandRepository.findAll(BrandSpec.getSpec(b.getBrandid(),b.getBrandname(),b.getBrandimg()));
+    }
+
+    public List<Brand> findByCompany(String company) {
+        return brandRepository.findByCompany(company);
     }
 }

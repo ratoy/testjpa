@@ -4,8 +4,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -16,6 +20,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import sun.security.krb5.Credentials;
 
 /**
  * Created by wuhao on 2017/11/10.
@@ -154,5 +159,45 @@ public class OtherService {
         row.createCell(colNum++).setCellValue(9);
         row.createCell(colNum++).setCellValue(0);
         return workbook;
+    }
+
+
+    public String PostWithHeader(String url, Map<String, String> mapHeaders, String strBody, Boolean jsonMode) throws IOException {
+        RequestBody body = RequestBody.create(XFORM, strBody);
+        if (jsonMode) {
+            body = RequestBody.create(JSON, strBody);
+        }
+        Headers headers = Headers.of(mapHeaders);
+        //log.info("headers: " + headers.toString());
+        Request request = new Request.Builder()
+                .url(url)
+                .headers(headers)
+                .post(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
+    }
+
+    public void deleteCredential(String jenkinsGUID) throws Exception {
+        //curl -X POST "https://<user>:<APItoken>@<jenkinsurl>/credentials/store/system/domain/_/credential/<credetntial>/doDelete"
+        String jenkinsUrl, userName, password;
+        JenkinsHttpClient jenkinsHttpClient = new JenkinsHttpClient(new URI(jenkinsUrl), userName, password);
+        JenkinsServer jenkins = new JenkinsServer(jenkinsHttpClient);
+        String url = jenkinsUrl + "/credentials/store/system/domain/_/credential/"+jenkinsGUID+"/doDelete";
+        //log.info("url: " + url);
+        String crumb = getCUMB();
+        String[] crumbDetails = crumb.split(":");
+
+        Map<String, String> mapHeaders = new HashMap<>();
+        mapHeaders.put(crumbDetails[0], crumbDetails[1]);
+        //log.info("crumb: " + crumbDetails[0] + " , " + crumbDetails[1]);
+
+        //user and pass
+        mapHeaders.put("Authorization", Credentials.basic(userName, password));
+
+        String resInString = PostWithHeader(url, mapHeaders, "", false);
+        //log.info(resInString);
     }
 }

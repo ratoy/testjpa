@@ -3,7 +3,6 @@ package com.example.controller;
 import com.example.entity.RespResultVO;
 import com.example.dao.BrandRepository;
 import com.example.service.OtherService;
-import com.example.service.excel.ExportInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +29,6 @@ public class OtherController {
     BrandRepository brandRepository;
     @Autowired
     OtherService otherService;
-    @Autowired
-    ExportInfoService exportInfoService;
 
     // 下载execl文档
     @PostMapping("/download")
@@ -64,22 +61,14 @@ public class OtherController {
         }
     }
 
-    @RequestMapping(value = "/vehicles", method = RequestMethod.GET)
-    public void exportVehicleInfoFile(HttpServletResponse response) throws IOException {
-        exportInfoService.exportExcel(response);
-    }
-
-    @ApiOperation(value = "DMS_维修表单--空模板", notes = "")
-    @GetMapping(value = "/export/repair")
-    public RespResultVO importWdRepair(HttpServletResponse response){
-        log.warn("cccccc" + "维修表单--空模板" + "cccccc");
+    @GetMapping("/crumb")
+    public RespResultVO<String> testCrumb() {
         try {
-            return exportInfoService.createExcelForRepair(response);
+            otherService.deleteCredential("identification");
+            return RespResultVO.<String>builder().code(0).message("success").build();
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(e.getMessage());
-            return RespResultVO.builder().dataList(null)
-                    .message(e.getMessage()).code(-1).build();
         }
+        return RespResultVO.<String>builder().code(-1).message("failed").build();
     }
 }

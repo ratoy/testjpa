@@ -196,4 +196,11 @@ public class DemoController {
         List<Brand> brandimgList = brandService.findAllUseSpecification(brand);
         return RespResultVO.<Brand>builder().code(0).dataList(brandimgList).build();
     }
+
+    @ApiOperation(value = "连接查询测试2", notes = "连接查询测试2")
+    @GetMapping(value = "/bycompany")
+    public RespResultVO<Brand> findByField(@RequestParam(required = false) String company){
+        List<Brand> brandimgList = brandService.findByCompany(company);
+        return RespResultVO.<Brand>builder().code(0).dataList(brandimgList).build();
+    }
 }

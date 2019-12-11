@@ -31,35 +31,24 @@ import java.util.List;
 @Slf4j
 public class BrandSpec {
     public static Specification<Brand> getSpec(final Long id, final String name, final String img) {
-        return new Specification<Brand>() {
-
-            Long brandid;
-            @Column(name = "brand_name")
-            String brandname;
-            @Column(name = "brand_img")
-            String brandimg;
-
-            @SuppressWarnings("unused")
-            @Override
-            public Predicate toPredicate(Root<Brand> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Predicate predicate = cb.conjunction();
-                if (id > 0) {
-                    predicate.getExpressions().add(
-                            cb.and(root.<Brand>get("brandid").in(id)));
-                }
-
-                if (!StringUtils.isEmpty(name)) {
-                    predicate.getExpressions().add(
-                            cb.and(root.<String>get("brandname").in(name)));
-                }
-
-                if (!StringUtils.isEmpty(img)) {
-                    predicate.getExpressions().add(
-                            cb.and(root.<String>get("brandimg").in(img)));
-                }
-
-                return predicate;
+        return (root, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+            if (id > 0) {
+                predicate.getExpressions().add(
+                        cb.and(root.<Brand>get("brandid").in(id)));
             }
+
+            if (!StringUtils.isEmpty(name)) {
+                predicate.getExpressions().add(
+                        cb.and(root.<String>get("brandname").in(name)));
+            }
+
+            if (!StringUtils.isEmpty(img)) {
+                predicate.getExpressions().add(
+                        cb.and(root.<String>get("brandimg").in(img)));
+            }
+
+            return predicate;
         };
     }
 }
